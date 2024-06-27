@@ -1,4 +1,4 @@
-import { FRUITS} from "/suika1/fruit.js"
+import {FRUITS} from "/suika1/fruits.js"
 
 
 
@@ -7,7 +7,8 @@ var Engine = Matter.Engine,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
     World = Matter.World,
-    Body = Matter.Boddy;
+    Body = Matter.Body,
+    Events = Matter.Events;
 
 const engine = Engine.create();
 
@@ -18,7 +19,7 @@ const render = Render.create({
         wireframes : false,
         background: '#F7F4C8',
         width: 620,
-        higth: 850,
+        height: 850,
     }
 });
 const world = engine.world;
@@ -37,7 +38,7 @@ const ground = Bodies.rectangle(310, 820, 620, 60,{
 })
 const topLine = Bodies.rectangle(310, 150, 620, 2,{
     isStatic : true,
-    isSenser : true,
+    isSensor : true,
     render : {filStyle: '#E6B143'}
 })
 
@@ -71,30 +72,59 @@ function addFruit(){
 
     World.add(world, body);
 }
-window.onkeydown((event) =>{
+
+window.onkeydown = (event) =>{
+    if(disableAction)
+        return;
+    
     switch(event.code){
         case "KeyA":
             Body.setPosition(currentBody, {
-                x: cuttentBody.position.x - 10,
+                x: currentBody.position.x - 10,
                 y: currentBody.position.y
             })
             break;
         case "KeyD":
             Body.setPosition(currentBody, {
-                x: cuttentBody.position.x + 10,
+                x: currentBody.position.x + 10,
                 y: currentBody.position.y
             })
             break;
-        case"KeyS":
-            currentBody.issSleeping = false;
-            addFruit();
+        case "KeyS":
+            currentBody.isSleeping = false;
+            disableAction = true;
             setTimeout(()=>{
-                addFruit();
                 disableAction = false;
+                addFruit();                
             },1000)
             break;
     }
+}
 
+Events.on(engine,"collisionStart", (event)=>{
+    event.pairs.forEach((collision)=>{
+        if(collision.bodyA.index == collision.bodyB.index){
+
+            const index = collision.bodyA.index;
+
+            World.remove(world, [collision.bodyA, collision.bodyB]);
+
+            const newFruit = FRUITS[index + 1];
+            const newBody = Bodies.circle(
+                collision.collision.supports[0].x,
+                collision.collision.supports[0].y,
+                newFruit.radius,
+                {
+                    index : index+1,
+                    render : {sprite : {texture : `${newFruit.name}.png`}}
+                }
+            )
+            World.add(world, newBody)
+        }
+    });
 });
+
+
+
 
 addFruit();
