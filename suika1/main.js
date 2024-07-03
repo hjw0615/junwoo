@@ -26,20 +26,20 @@ const world = engine.world;
 
 const leftWall = Bodies.rectangle(15, 395, 30, 790,{
     isStatic : true,
-    render : {filStyle: '#E6B143'}
+    render : {fillStyle: '#E6B143'}
 })
 const right = Bodies.rectangle(605, 395, 30, 790,{
     isStatic : true,
-    render : {filStyle: '#E6B143'}
+    render : {fillStyle: '#E6B143'}
 })
 const ground = Bodies.rectangle(310, 820, 620, 60,{
     isStatic : true,
-    render : {filStyle: '#E6B143'}
+    render : {fillStyle: '#E6B143'}
 })
 const topLine = Bodies.rectangle(310, 150, 620, 2,{
     isStatic : true,
     isSensor : true,
-    render : {filStyle: '#E6B143'}
+    render : {fillStyle: '#FAAC58'}
 })
 
 
@@ -76,15 +76,22 @@ function addFruit(){
 window.onkeydown = (event) =>{
     if(disableAction)
         return;
-    
+
+    const fruitSize = FRUITS[currentBody.index].radius;
     switch(event.code){
         case "KeyA":
+            if(currentBody.position.x - 10 <= 25 +fruitSize){
+                break;
+            }
             Body.setPosition(currentBody, {
                 x: currentBody.position.x - 10,
                 y: currentBody.position.y
             })
             break;
         case "KeyD":
+            if(currentBody.position.x +10 >= 535 +fruitSize){
+                break;
+            }
             Body.setPosition(currentBody, {
                 x: currentBody.position.x + 10,
                 y: currentBody.position.y
@@ -96,13 +103,21 @@ window.onkeydown = (event) =>{
             setTimeout(()=>{
                 disableAction = false;
                 addFruit();                
-            },1000)
+            },100)
             break;
     }
 }
 
 Events.on(engine,"collisionStart", (event)=>{
     event.pairs.forEach((collision)=>{
+        if (collision.bodyA.id == topLine.id || collision.bodyB.id == topLine.id) {
+			setTimeout(() => {
+				if (Matter.Collision.collides(collision.bodyA, collision.bodyB) !== null) {
+					alert("컷");
+				}
+			}, 2000);
+		}
+
         if(collision.bodyA.index == collision.bodyB.index){
 
             const index = collision.bodyA.index;
