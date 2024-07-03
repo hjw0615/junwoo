@@ -26,7 +26,7 @@ const world = engine.world;
 
 const leftWall = Bodies.rectangle(15, 395, 30, 790,{
     isStatic : true,
-    render : {fillStyle: '#E6B143'}
+    render : {fillStyle: '#FE642E'}
 })
 const right = Bodies.rectangle(605, 395, 30, 790,{
     isStatic : true,
@@ -34,7 +34,7 @@ const right = Bodies.rectangle(605, 395, 30, 790,{
 })
 const ground = Bodies.rectangle(310, 820, 620, 60,{
     isStatic : true,
-    render : {fillStyle: '#E6B143'}
+    render : {fillStyle: '#424242'}
 })
 const topLine = Bodies.rectangle(310, 150, 620, 2,{
     isStatic : true,
@@ -89,7 +89,7 @@ window.onkeydown = (event) =>{
             })
             break;
         case "KeyD":
-            if(currentBody.position.x +10 >= 535 +fruitSize){
+            if(currentBody.position.x +10 >= 593 -fruitSize){
                 break;
             }
             Body.setPosition(currentBody, {
@@ -103,7 +103,7 @@ window.onkeydown = (event) =>{
             setTimeout(()=>{
                 disableAction = false;
                 addFruit();                
-            },100)
+            },1000)
             break;
     }
 }
@@ -113,9 +113,9 @@ Events.on(engine,"collisionStart", (event)=>{
         if (collision.bodyA.id == topLine.id || collision.bodyB.id == topLine.id) {
 			setTimeout(() => {
 				if (Matter.Collision.collides(collision.bodyA, collision.bodyB) !== null) {
-					alert("컷");
+					alert("아웃");
 				}
-			}, 2000);
+			}, 5000);
 		}
 
         if(collision.bodyA.index == collision.bodyB.index){
